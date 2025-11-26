@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submarino de Rescate - Examen 01</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- HUD (Interfaz de usuario) -->
+    <div id="hud">
+        <div id="info">
+            <h2>🚢 Submarino de Rescate</h2>
+            <p>Buzos rescatados: <span id="score">0</span></p>
+            <p id="status">Busca buzos en el fondo del océano</p>
+        </div>
+        <div id="controls">
+            <h3>Controles:</h3>
+            <p>⬆️ W, A, S, D - Mover</p>
+            <p>↕️ Q, E - Subir/Bajar</p>
+            <p>⚡ ESPACIO - Recoger/Entregar</p>
+        </div>
+    </div>
+
+    <!-- Canvas donde se renderiza el juego 3D -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Cargar Babylon.js desde CDN -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+
+    <!-- Cargar nuestros módulos en orden -->
+    <!-- 1. Configuración primero -->
+    <script src="js/config.js"></script>
+
+    <!-- 2. Clases de entidades -->
+    <script src="js/entities/Submarine.js"></script>
+    <script src="js/entities/Diver.js"></script>
+    <script src="js/entities/Ship.js"></script>
+
+    <!-- 3. Sistemas del juego -->
+    <script src="js/systems/InputManager.js"></script>
+    <script src="js/systems/CollisionManager.js"></script>
+    <script src="js/systems/UIManager.js"></script>
+
+    <!-- 4. Ambiente -->
+    <script src="js/environment/Ocean.js"></script>
+    <script src="js/environment/Effects.js"></script>
+
+    <!-- 5. Main al final (usa todas las clases anteriores) -->
+    <script src="js/main.js"></script>
+</body>
+</html>
