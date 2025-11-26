@@ -40,3 +40,30 @@ Submarino de Rescate es un juego 3D donde controlas un submarino amarillo que de
 ---
 
 ## 🏗️ Estructura del Proyecto
+SubmarinoDeRescate/
+│
+├── index.html                 # Punto de entrada del juego
+├── README.md                  # Este archivo
+│
+├── css/
+│   └── styles.css            # Estilos del HUD y canvas
+│
+├── js/
+│   ├── main.js               # Orquestador principal del juego
+│   ├── config.js             # Configuración y constantes
+│   │
+│   ├── entities/             # Objetos del juego
+│   │   ├── Submarine.js      # Clase del submarino (jugador)
+│   │   ├── Diver.js          # Clase de los buzos (paquetes)
+│   │   └── Ship.js           # Clase del barco (zona de entrega)
+│   │
+│   ├── systems/              # Sistemas del juego
+│   │   ├── InputManager.js   # Manejo de teclado
+│   │   ├── CollisionManager.js # Detección de proximidad
+│   │   └── UIManager.js      # Interfaz de usuario (HUD)
+│   │
+│   └── environment/          # Ambiente y efectos
+│       ├── Ocean.js          # Escenario submarino
+│       └── Effects.js        # Efectos visuales (burbujas, rocas, corales)
+│
+└── assets/                   # (Vacío - todo generado por código)
