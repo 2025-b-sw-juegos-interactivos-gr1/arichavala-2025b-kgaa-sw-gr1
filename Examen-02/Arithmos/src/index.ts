@@ -34,16 +34,18 @@ class Game {
         this.gameManager = GameManager.getInstance();
         this.gameManager.init();
         
-        // Crear la escena
-        this.scene = this.createScene();
+        // Inicializar propiedades antes de crear la escena
         this.playerController = null;
         this.interactionSystem = null;
         this.feedbackSystem = null;
         
+        // Crear la escena (esto asignara playerController, etc)
+        this.scene = this.createScene();
+        
         // Ocultar pantalla de carga
         this.hideLoadingScreen();
         
-        // Iniciar el loop de renderizado
+        // Iniciar el loop de renderizado DESPUES de crear la escena
         this.engine.runRenderLoop(() => {
             // Actualizar el controlador del jugador (movimiento WASD)
             if (this.playerController) {

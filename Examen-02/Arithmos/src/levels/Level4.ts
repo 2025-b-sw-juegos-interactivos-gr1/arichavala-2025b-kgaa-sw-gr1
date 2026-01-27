@@ -1,24 +1,28 @@
 /**
- * Level4 - Río Divisor
- * Implementación específica del Nivel 4 (Épica 3)
- * Tema: División y fracciones
+ * Level4 - Rio Divisor
+ * Implementacion especifica del Nivel 4 (Epica 3)
+ * Tema: Division y fracciones
  * 
  * E2-HU-08: Integrado con FeedbackSystem
+ * E3-HU-12: Zona de Meta con trigger
  */
 import { Scene, MeshBuilder, Vector3, StandardMaterial, Color3 } from '@babylonjs/core';
 import { Level } from './Level';
 import { SphereInteractable } from '../interactables/SphereInteractable';
 import { DoorMechanism } from '../mechanics/DoorMechanism';
+import { TriggerZone } from '../mechanics/TriggerZone';
 import { FeedbackSystem } from '../core/FeedbackSystem';
 
 export class Level4 extends Level {
     private doorMechanism: DoorMechanism;
     private feedbackSystem: FeedbackSystem;
+    private goalTrigger: TriggerZone | null;
 
     constructor(scene: Scene, feedbackSystem: FeedbackSystem) {
-        super(scene, 4, 'Río Divisor');
+        super(scene, 4, 'Rio Divisor');
         this.feedbackSystem = feedbackSystem;
         this.doorMechanism = new DoorMechanism(scene, feedbackSystem);
+        this.goalTrigger = null;
     }
 
     /**
@@ -99,7 +103,45 @@ export class Level4 extends Level {
 
         this.doorMechanism.createDoor(glitchWall);
 
+        // E3-HU-12: Crear zona de meta (trigger invisible al final del pasillo)
+        this.createGoalZone();
+
         console.log('Greyboxing completado: Pasillo de 40x10 unidades con paredes laterales');
+    }
+
+    /**
+     * E3-HU-12: Crea la zona de meta al final del pasillo
+     * Trigger invisible que detecta cuando el jugador llega al final
+     */
+    private createGoalZone(): void {
+        // Posicion al final del pasillo, despues de la pared
+        const goalPosition = new Vector3(0, 2, 15);
+        const goalSize = new Vector3(10, 6, 5);
+
+        this.goalTrigger = new TriggerZone(
+            this.scene,
+            goalPosition,
+            goalSize,
+            'goalZone'
+        );
+
+        // Callback cuando el jugador entra a la zona
+        this.goalTrigger.onEnter(() => {
+            this.onLevelComplete();
+        });
+
+        console.log('Zona de Meta creada en Z=15 (final del pasillo)');
+    }
+
+    /**
+     * E3-HU-12: Se ejecuta cuando el jugador completa el nivel
+     */
+    private onLevelComplete(): void {
+        console.log('========================================');
+        console.log('    NIVEL COMPLETADO');
+        console.log('========================================');
+        console.log('El jugador alcanzo la zona de meta!');
+        console.log('Nivel 4: Rio Divisor - COMPLETADO');
     }
 
     /**
@@ -156,5 +198,15 @@ export class Level4 extends Level {
         this.puzzleManager.registerInteractable(sphere3);
 
         console.log('Interactuables posicionados: 3 esferas en Z=7, Y=2 (flotantes sobre plataforma)');
+    }
+
+    /**
+     * Limpia recursos del nivel
+     */
+    public dispose(): void {
+        if (this.goalTrigger) {
+            this.goalTrigger.dispose();
+        }
+        super.dispose();
     }
 }

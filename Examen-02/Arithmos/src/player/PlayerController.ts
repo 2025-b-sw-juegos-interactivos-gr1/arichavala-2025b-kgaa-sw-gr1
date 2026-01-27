@@ -15,6 +15,10 @@ export class PlayerController {
     private scene: Scene;
     private moveSpeed: number = 0.1;
     private inputMap: { [key: string]: boolean };
+    private minX: number = -3.5;
+    private maxX: number = 3.5;
+    private minZ: number = -19;
+    private maxZ: number = 18;
 
     constructor(scene: Scene) {
         this.scene = scene;
@@ -24,7 +28,7 @@ export class PlayerController {
     }
 
     /**
-     * Crea y configura la cámara en primera persona
+     * Crea y configura la camara en primera persona
      */
     private createCamera(): UniversalCamera {
         const camera = new UniversalCamera(
@@ -33,18 +37,24 @@ export class PlayerController {
             this.scene
         );
         
-        // Configurar la cámara para mirar hacia adelante
+        // Configurar la camara para mirar hacia adelante
         camera.setTarget(new Vector3(0, 1.6, 0));
         
-        // Permitir control del mouse para mirar alrededor
-        camera.attachControl(true);
+        // Obtener el canvas
+        const canvas = this.scene.getEngine().getRenderingCanvas();
+        if (canvas) {
+            // Permitir control del mouse para mirar alrededor
+            camera.attachControl(canvas, true);
+        }
         
         // Deshabilitar las teclas de movimiento por defecto de Babylon
-        // para implementar el nuestro personalizado
         camera.keysUp = [];
         camera.keysDown = [];
         camera.keysLeft = [];
         camera.keysRight = [];
+        
+        // Ajustar sensibilidad del mouse
+        camera.angularSensibility = 2000;
         
         return camera;
     }
@@ -71,7 +81,7 @@ export class PlayerController {
     }
 
     /**
-     * Actualiza la posición del jugador (llamado en el game loop)
+     * Actualiza la posicion del jugador (llamado en el game loop)
      * Implementa el movimiento WASD en primera persona
      */
     public update(): void {
@@ -83,7 +93,7 @@ export class PlayerController {
             moveVector.addInPlace(this.camera.getDirection(Vector3.Forward()));
         }
 
-        // S - Atrás (Backward)
+        // S - Atras (Backward)
         if (this.inputMap['s']) {
             moveVector.addInPlace(this.camera.getDirection(Vector3.Backward()));
         }
@@ -103,13 +113,20 @@ export class PlayerController {
             moveVector.normalize();
             
             // Aplicar velocidad
-            moveVector.scaleInPlace(this.moveSpeed);
+            moveVector.scaleInPlace(0.3);
             
             // Mantener la altura constante (sin salto)
             moveVector.y = 0;
             
-            // Mover la cámara
-            this.camera.position.addInPlace(moveVector);
+            // Calcular nueva posicion
+            const newPosition = this.camera.position.add(moveVector);
+            
+            // Aplicar limites del pasillo (no salirse por los lados)
+            newPosition.x = Math.max(this.minX, Math.min(this.maxX, newPosition.x));
+            newPosition.z = Math.max(this.minZ, Math.min(this.maxZ, newPosition.z));
+            
+            // Mover la camara a la posicion limitada
+            this.camera.position = newPosition;
         }
     }
 
