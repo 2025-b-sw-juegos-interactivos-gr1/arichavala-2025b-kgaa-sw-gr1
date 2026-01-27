@@ -2,6 +2,8 @@
  * SphereInteractable
  * Implementación concreta de InteractableObject para esferas flotantes
  * Representan las opciones de respuesta en los puzzles
+ * 
+ * E2-HU-07: Configurado para detectar clics mediante raycast
  */
 import { MeshBuilder, Scene, Vector3, StandardMaterial, Color3 } from '@babylonjs/core';
 import { InteractableObject } from './InteractableObject';
@@ -41,10 +43,20 @@ export class SphereInteractable extends InteractableObject {
 
     /**
      * Configura el evento de clic en la esfera
+     * Usa metadata para conectar con el InteractionSystem
      */
     private setupInteraction(): void {
         if (this.mesh) {
-            this.mesh.actionManager = null; // Se implementará con ActionManager en siguientes historias
+            // Configurar metadata con callback de interacción
+            this.mesh.metadata = {
+                onInteract: () => this.onPointerDown()
+            };
+            
+            // Hacer que el mesh sea seleccionable por raycast
+            this.mesh.isPickable = true;
+            
+            // Efecto hover (resaltar al pasar el mouse)
+            this.mesh.enablePointerMoveEvents = true;
         }
     }
 }

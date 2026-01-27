@@ -5,6 +5,7 @@
  */
 import { Engine, Scene, HemisphericLight, Vector3, Color3 } from "@babylonjs/core";
 import { GameManager } from "./core/GameManager";
+import { InteractionSystem } from "./core/InteractionSystem";
 import { PlayerController } from "./player/PlayerController";
 import { Level4 } from "./levels/Level4";
 
@@ -14,6 +15,7 @@ class Game {
     private scene: Scene;
     private gameManager: GameManager;
     private playerController: PlayerController | null;
+    private interactionSystem: InteractionSystem | null;
 
     constructor() {
         // Obtener el canvas del HTML
@@ -33,6 +35,7 @@ class Game {
         // Crear la escena
         this.scene = this.createScene();
         this.playerController = null;
+        this.interactionSystem = null;
         
         // Ocultar pantalla de carga
         this.hideLoadingScreen();
@@ -65,6 +68,9 @@ class Game {
         // Crear controlador del jugador (cámara en primera persona)
         this.playerController = new PlayerController(scene);
 
+        // Inicializar sistema de interacción (raycast)
+        this.interactionSystem = new InteractionSystem(scene);
+
         // Cargar Nivel 4 (Épica 3 - Historia de Usuario E3-HU-09 a E3-HU-12)
         const level4 = new Level4(scene);
         level4.buildGeometry();
@@ -77,6 +83,7 @@ class Game {
         console.log('📚 Nivel 4: Río Divisor cargado');
         console.log('✨ Arquitectura: Singleton + Observer + State Pattern');
         console.log('🎯 Controles: WASD para movimiento, Mouse para mirar');
+        console.log('🖱️ Sistema de Raycast: Clic izquierdo para interactuar');
         
         return scene;
     }
