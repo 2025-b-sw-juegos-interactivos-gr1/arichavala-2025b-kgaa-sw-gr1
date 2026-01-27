@@ -104,36 +104,40 @@ export class Level4 extends Level {
 
     /**
      * Configura los puzzles del Nivel 4
-     * Coloca las 3 esferas con valores (5, 7, 6) donde 6 es la correcta
+     * E3-HU-10: Colocar Interactuables
+     * Coloca las 3 esferas flotantes frente a la pared con los valores 5, 7 y 6
+     * Posicion: Sobre la plataforma elevada, a 2 unidades de altura
      */
     public setupPuzzles(): void {
         console.log('Configurando puzzles del Nivel 4...');
 
         this.puzzleManager.setupPuzzle('level4_division');
 
-        // Crear las 3 esferas de opción
+        // Esfera izquierda: Valor 5 (Incorrecta)
         const sphere1 = new SphereInteractable(
             'sphere_5',
             5,
             false,
             this.scene,
-            new Vector3(-3, 1.5, 8)
+            new Vector3(-2.5, 2, 7)
         );
 
+        // Esfera central: Valor 7 (Incorrecta)
         const sphere2 = new SphereInteractable(
             'sphere_7',
             7,
             false,
             this.scene,
-            new Vector3(0, 1.5, 8)
+            new Vector3(0, 2, 7)
         );
 
+        // Esfera derecha: Valor 6 (Correcta)
         const sphere3 = new SphereInteractable(
             'sphere_6',
             6,
-            true, // Esta es la respuesta correcta
+            true,
             this.scene,
-            new Vector3(3, 1.5, 8)
+            new Vector3(2.5, 2, 7)
         );
 
         // Configurar FeedbackSystem en las esferas
@@ -150,5 +154,7 @@ export class Level4 extends Level {
         this.puzzleManager.registerInteractable(sphere1);
         this.puzzleManager.registerInteractable(sphere2);
         this.puzzleManager.registerInteractable(sphere3);
+
+        console.log('Interactuables posicionados: 3 esferas en Z=7, Y=2 (flotantes sobre plataforma)');
     }
 }

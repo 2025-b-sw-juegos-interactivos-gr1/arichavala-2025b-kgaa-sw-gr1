@@ -21,13 +21,11 @@ export class FeedbackSystem {
      * Feedback de respuesta correcta
      */
     public showSuccess(mesh?: Mesh): void {
-        console.log('✅ ¡Correcto!');
-        
         if (mesh) {
             this.flashColor(mesh, Color3.Green());
         }
 
-        // Sonido de éxito (placeholder - se puede reemplazar con archivo real)
+        // Sonido de exito
         this.playSuccessSound();
     }
 
@@ -35,8 +33,6 @@ export class FeedbackSystem {
      * Feedback de respuesta incorrecta
      */
     public showError(mesh?: Mesh): void {
-        console.log('❌ Incorrecto. Inténtalo de nuevo.');
-        
         if (mesh) {
             this.flashColor(mesh, Color3.Red());
             this.shakeObject(mesh);

@@ -45,11 +45,9 @@ export abstract class InteractableObject {
     }
 
     /**
-     * Maneja el evento de clic/interacción
+     * Maneja el evento de clic/interaccion
      */
     public onPointerDown(): void {
-        console.log(`Objeto ${this.id} seleccionado. Valor: ${this.value}`);
-        
         // Feedback visual en la esfera
         if (this.feedbackSystem && this.mesh) {
             if (this.isCorrect) {
