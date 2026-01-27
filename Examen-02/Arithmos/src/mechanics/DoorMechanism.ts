@@ -1,9 +1,10 @@
 /**
  * DoorMechanism
- * Controla la animación de las puertas/obstáculos.
+ * Controla la animacion de las puertas/obstaculos.
  * Se suscribe al InteractableObject usando el Observer Pattern.
  * 
- * E2-HU-08: Integrado con FeedbackSystem para retroalimentación visual/auditiva
+ * E2-HU-08: Integrado con FeedbackSystem para retroalimentacion visual/auditiva
+ * E3-HU-11: Logica de la Pared Glitch - Dispose al seleccionar respuesta correcta
  */
 import { Mesh, Scene, Animation } from '@babylonjs/core';
 import { IObserver } from '../interactables/InteractableObject';
@@ -27,41 +28,47 @@ export class DoorMechanism implements IObserver {
      */
     public createDoor(mesh: Mesh): void {
         this.doorMesh = mesh;
+        console.log('Pared Glitch creada y lista para desbloquearse');
     }
 
     /**
-     * Implementación del Observer Pattern
-     * Se ejecuta cuando el jugador selecciona una respuesta
+     * Implementacion del Observer Pattern
+     * E3-HU-11: Se ejecuta cuando el jugador selecciona una respuesta
+     * Si es correcta (esfera 6), la pared desaparece
      */
     public onNotify(isCorrect: boolean): void {
         if (isCorrect) {
-            console.log('¡Respuesta correcta! Abriendo puerta...');
+            console.log('Respuesta correcta! Abriendo puerta...');
             this.feedbackSystem.showSuccess(this.doorMesh || undefined);
             this.openDoor();
         } else {
-            console.log('Respuesta incorrecta. Inténtalo de nuevo.');
+            console.log('Respuesta incorrecta. Intentalo de nuevo.');
             this.feedbackSystem.showError(this.doorMesh || undefined);
-            this.showError();
         }
     }
 
     /**
-     * Abre la puerta (animación o dispose)
+     * E3-HU-11: Abre la puerta eliminandola de la escena
+     * Logica: Si clic en esfera 6 (correcta) -> Pared.dispose()
      */
     private openDoor(): void {
         if (this.doorMesh && !this.isOpen) {
-            // Por ahora simplemente eliminamos la puerta
-            // En futuras historias se añadirá animación
+            console.log('Ejecutando Pared.dispose() - Pared Glitch eliminada');
+            
+            // Eliminar la pared de la escena
             this.doorMesh.dispose();
             this.isOpen = true;
+            
+            console.log('Camino desbloqueado! El jugador puede avanzar');
+        } else if (this.isOpen) {
+            console.log('La puerta ya esta abierta');
         }
     }
 
     /**
-     * Muestra feedback visual de error
+     * Verifica si la puerta esta abierta
      */
-    private showError(): void {
-        // Se implementará en futuras historias (shake effect, sonido)
-        console.log('Efecto de error visual (pendiente)');
+    public getIsOpen(): boolean {
+        return this.isOpen;
     }
 }
