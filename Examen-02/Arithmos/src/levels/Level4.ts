@@ -6,6 +6,7 @@
  * E2-HU-08: Integrado con FeedbackSystem
  * E3-HU-12: Zona de Meta con trigger
  * E4-HU-13: Arte Low Poly - Rio de datos y puente de cristal
+ * E4-HU-14: Personaje Pipo y sistema de diálogos
  */
 import { Scene, MeshBuilder, Vector3, StandardMaterial, Color3, DynamicTexture, Texture } from '@babylonjs/core';
 import { Level } from './Level';
@@ -13,26 +14,45 @@ import { SphereInteractable } from '../interactables/SphereInteractable';
 import { DoorMechanism } from '../mechanics/DoorMechanism';
 import { TriggerZone } from '../mechanics/TriggerZone';
 import { FeedbackSystem } from '../core/FeedbackSystem';
+import { Pipo } from '../characters/Pipo';
+import { DialogueSystem } from '../ui/DialogueSystem';
 
 export class Level4 extends Level {
     private doorMechanism: DoorMechanism;
     private feedbackSystem: FeedbackSystem;
     private goalTrigger: TriggerZone | null;
+    private pipo: Pipo | null;
+    private dialogueSystem: DialogueSystem;
 
     constructor(scene: Scene, feedbackSystem: FeedbackSystem) {
         super(scene, 4, 'Rio Divisor');
         this.feedbackSystem = feedbackSystem;
         this.doorMechanism = new DoorMechanism(scene, feedbackSystem);
         this.goalTrigger = null;
+        this.pipo = null;
+        this.dialogueSystem = new DialogueSystem(scene);
     }
 
     /**
      * Greyboxing del Nivel 4
      * E3-HU-09: Construccion completa del pasillo lineal
      * E4-HU-13: Puente de cristal sobre rio de datos
+     * E4-HU-14: Pipo y diálogo inicial
      */
     public buildGeometry(): void {
         console.log('Construyendo geometria del Nivel 4: Rio Divisor');
+
+        // E4-HU-14: Crear personaje Pipo al lado del camino, cerca de las esferas
+        // Pipo está adelante en el camino (Z=2), visible pero no bloqueando
+        this.pipo = new Pipo(this.scene, new Vector3(3.5, 1, 2));
+
+        // E4-HU-14: Mostrar diálogo pequeño cerca de Pipo
+        setTimeout(() => {
+            this.dialogueSystem.showDialogue(
+                '¡Hola! Soy Pipo. Para pasar la barrera del 24, haz clic en la esfera con el número que lo divide exactamente.',
+                new Vector3(2.5, 2.5, 2) // Junto a Pipo
+            );
+        }, 1000);
 
         // E4-HU-14: Iniciar música de fondo
         this.feedbackSystem.startBackgroundMusic();
@@ -377,6 +397,10 @@ export class Level4 extends Level {
     public dispose(): void {
         // E4-HU-14: Detener música al salir del nivel
         this.feedbackSystem.stopBackgroundMusic();
+        
+        if (this.pipo) {
+            this.pipo.dispose();
+        }
         
         if (this.goalTrigger) {
             this.goalTrigger.dispose();

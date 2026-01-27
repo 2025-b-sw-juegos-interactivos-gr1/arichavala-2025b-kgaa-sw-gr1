@@ -12,17 +12,59 @@ Arithmos es una aventura de exploración y lógica donde el jugador asume el rol
 # Instalar dependencias
 npm install
 
-# Generar archivos de sonido (E4-HU-14)
-# Abrir public/assets/sounds/generate-sounds.html en un navegador
-# Hacer clic en "Generar Success" y "Generar Error"
-# Mover los archivos descargados a public/assets/sounds/
-
 # Ejecutar en modo desarrollo
 npm start
 
 # Compilar para producción
 npm run build
 ```
+
+El juego se abrirá en `http://localhost:8080`
+
+##  Controles
+
+- **W A S D**: Movimiento (adelante, izquierda, atrás, derecha)
+- **Mouse**: Mirar alrededor
+- **Clic izquierdo**: Interactuar con objetos
+
+##  Vertical Slice - Nivel 4: Río Divisor
+
+**Enfoque del Examen**: **Mecánicas** (Juego Serio - Gamificación y Feedback)
+
+Este prototipo implementa el **Nivel 4 completo** como prueba de concepto:
+
+**Objetivo**: Resolver el puzzle matemático para cruzar el puente de cristal.
+
+**Gameplay**:
+1. Caminas sobre un puente de cristal transparente sobre un río de datos azul
+2. Una barrera roja con el número **24** bloquea tu camino
+3. Debes elegir la "varita divisora" correcta (esfera verde con el número **6**)
+4. Al elegir correctamente, la barrera se fragmenta en **4 partes** (24 ÷ 6 = 4)
+5. Continúas caminando hasta la zona de meta
+6. Aparece mensaje de victoria con música triunfal
+
+**Concepto Matemático**: División exacta (24 ÷ 6 = 4)
+
+**Mecánicas Core Implementadas**:
+- Sistema de movimiento FPS con colisiones físicas
+- Raycast para interacción con objetos 3D
+- Observer Pattern para comunicación entre sistemas
+- Feedback visual (cambio de colores, animación de fragmentación)
+- Feedback auditivo (beeps de éxito/error, música ambiente, sonido de victoria)
+- State Management (carga → gameplay → victoria)
+
+##  Características Implementadas
+
+- ✓ Movimiento en primera persona con colisiones
+- ✓ Sistema de interacción por raycast
+- ✓ Feedback visual (colores, animaciones) y auditivo (beeps procedurales)
+- ✓ Puzzle matemático funcional con Observer Pattern
+- ✓ Fragmentación animada de la barrera
+- ✓ Música de fondo ambiente
+- ✓ Detección de completación de nivel
+- ✓ Arte low poly (puente cristal, río de datos)
+
+**Nota**: El audio usa Web Audio API para generar sonidos proceduralmente - no requiere archivos externos.
 
 ##  Tecnologías
 
@@ -47,14 +89,10 @@ npm run build
 ### ÉPICA 4: Arte, Audio y Entrega
 - [x] E4-HU-13: Arte Low Poly
 - [x] E4-HU-14: Implementar Audio
-- [ ] E4-HU-15: Pruebas de Usuario
-- [ ] E4-HU-16: Exportar GDD
+- [x] E4-HU-15: Pruebas de Usuario
+- [x] E4-HU-16: Exportar GDD
 
 ##  Equipo
 
 - Karina Arichavala
 - Tatiana Gualpa
-
-##  Licencia
-
-MIT
