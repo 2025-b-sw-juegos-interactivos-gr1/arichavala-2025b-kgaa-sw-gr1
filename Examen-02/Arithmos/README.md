@@ -2,11 +2,11 @@
 
 Juego educativo de puzzles matemáticos en primera persona desarrollado con Babylon.js.
 
-## 🎮 Descripción
+##  Descripción
 
 Arithmos es una aventura de exploración y lógica donde el jugador asume el rol de un "Ingeniero Mágico" que debe reactivar una antigua civilización matemática resolviendo puzzles basados en conceptos del currículo de 5to grado.
 
-## 🚀 Instalación
+##  Instalación
 
 ```bash
 # Instalar dependencias
@@ -19,15 +19,15 @@ npm start
 npm run build
 ```
 
-## 🛠️ Tecnologías
+##  Tecnologías
 
 - **Babylon.js 6.0+**: Motor gráfico WebGL
 - **TypeScript 5.0**: Lenguaje de programación
 - **Webpack**: Empaquetador de módulos
 
-## 📋 Estado del Desarrollo
+##  Estado del Desarrollo
 
-### ✅ ÉPICA 2: Ingeniería Core
+###  ÉPICA 2: Ingeniería Core
 - [x] E2-HU-05: Configuración del Proyecto
 - [ ] E2-HU-06: Sistema de Movimiento (WASD)
 - [ ] E2-HU-07: Sistema de Interacción (Raycast)
@@ -39,11 +39,11 @@ npm run build
 - [ ] E3-HU-11: Lógica de la Pared Glitch
 - [ ] E3-HU-12: Zona de Meta
 
-## 👥 Equipo
+##  Equipo
 
 - Karina Arichavala
 - Tatiana Gualpa
 
-## 📄 Licencia
+##  Licencia
 
 MIT
