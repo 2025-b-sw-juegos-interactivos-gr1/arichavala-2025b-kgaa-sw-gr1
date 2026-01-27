@@ -2,6 +2,7 @@
  * FeedbackSystem
  * Sistema de retroalimentación visual y auditiva para el jugador.
  * E2-HU-08: Sistema de Feedback
+ * E4-HU-14: Implementar Audio (beeps procedurales)
  * 
  * Responsable de:
  * - Feedback visual (colores, animaciones, partículas)
@@ -12,9 +13,124 @@ import { Mesh, Animation, Color3, StandardMaterial, Sound, Scene, Vector3 } from
 
 export class FeedbackSystem {
     private scene: Scene;
+    private backgroundMusicContext: AudioContext | null = null;
+    private backgroundMusicSource: OscillatorNode | null = null;
+    private backgroundMusicGain: GainNode | null = null;
 
     constructor(scene: Scene) {
         this.scene = scene;
+    }
+
+    /**
+     * E4-HU-14: Inicia música de fondo del nivel
+     */
+    public startBackgroundMusic(): void {
+        if (this.backgroundMusicContext) {
+            return; // Ya está sonando
+        }
+
+        try {
+            this.backgroundMusicContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            this.backgroundMusicGain = this.backgroundMusicContext.createGain();
+            this.backgroundMusicGain.connect(this.backgroundMusicContext.destination);
+            this.backgroundMusicGain.gain.value = 0.15;
+
+            // Crear loop de notas ambiente (Do - Mi - Sol - Mi)
+            const playAmbientLoop = () => {
+                const notes = [261.63, 329.63, 392.00, 329.63]; // C - E - G - E
+                let noteIndex = 0;
+
+                const playNote = () => {
+                    if (!this.backgroundMusicContext) return;
+
+                    const osc = this.backgroundMusicContext.createOscillator();
+                    const gain = this.backgroundMusicContext.createGain();
+
+                    osc.connect(gain);
+                    gain.connect(this.backgroundMusicGain!);
+
+                    osc.type = 'triangle'; // Sonido más suave
+                    osc.frequency.value = notes[noteIndex];
+
+                    const now = this.backgroundMusicContext.currentTime;
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                    gain.gain.linearRampToValueAtTime(0, now + 1.2);
+
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+
+                    noteIndex = (noteIndex + 1) % notes.length;
+                    
+                    if (this.backgroundMusicContext) {
+                        setTimeout(playNote, 1200);
+                    }
+                };
+
+                playNote();
+            };
+
+            playAmbientLoop();
+            console.log('🎵 Música de fondo iniciada');
+        } catch (error) {
+            console.warn('No se pudo iniciar música de fondo:', error);
+        }
+    }
+
+    /**
+     * E4-HU-14: Detiene música de fondo del nivel
+     */
+    public stopBackgroundMusic(): void {
+        if (this.backgroundMusicContext) {
+            this.backgroundMusicContext.close();
+            this.backgroundMusicContext = null;
+            this.backgroundMusicGain = null;
+        }
+        console.log('🎵 Música de fondo detenida');
+    }
+
+    /**
+     * E4-HU-14: Sonido de victoria al completar el nivel
+     */
+    public playVictorySound(): void {
+        try {
+            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const duration = 1.5; // 1.5 segundos
+            
+            // Melodía de victoria: Do-Mi-Sol-Do (ascendente) más elaborada
+            const notes = [
+                { freq: 523.25, start: 0, duration: 0.2 },      // Do
+                { freq: 659.25, start: 0.2, duration: 0.2 },    // Mi
+                { freq: 783.99, start: 0.4, duration: 0.2 },    // Sol
+                { freq: 1046.50, start: 0.6, duration: 0.9 }    // Do (más largo)
+            ];
+
+            notes.forEach(note => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.value = note.freq;
+                oscillator.type = 'sine';
+
+                // Envelope para cada nota
+                const startTime = audioContext.currentTime + note.start;
+                const endTime = startTime + note.duration;
+                
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, endTime);
+
+                oscillator.start(startTime);
+                oscillator.stop(endTime);
+            });
+
+            console.log('🎉 Sonido de victoria');
+        } catch (error) {
+            console.warn('No se pudo reproducir sonido de victoria:', error);
+        }
     }
 
     /**
@@ -90,7 +206,7 @@ export class FeedbackSystem {
 
     /**
      * Reproduce sonido de éxito
-     * Usa Web Audio API para generar un tono (no requiere archivo externo)
+     * E4-HU-14: Beep procedural (arpegio ascendente)
      */
     private playSuccessSound(): void {
         this.playBeep(800, 0.2, 'sine'); // Tono agudo
@@ -98,6 +214,7 @@ export class FeedbackSystem {
 
     /**
      * Reproduce sonido de error
+     * E4-HU-14: Beep procedural (tono grave)
      */
     private playErrorSound(): void {
         this.playBeep(200, 0.3, 'sawtooth'); // Tono grave

@@ -33,6 +33,9 @@ export class Level4 extends Level {
     public buildGeometry(): void {
         console.log('Construyendo geometria del Nivel 4...');
 
+        // E4-HU-14: Iniciar música de fondo
+        this.feedbackSystem.startBackgroundMusic();
+
         // Suelo del pasillo (40 unidades de largo x 10 de ancho)
         const ground = MeshBuilder.CreateGround(
             'ground',
@@ -143,6 +146,10 @@ export class Level4 extends Level {
         console.log('========================================');
         console.log('El jugador alcanzo la zona de meta!');
         console.log('Nivel 4: Rio Divisor - COMPLETADO');
+        
+        // E4-HU-14: Detener música de fondo y reproducir victoria
+        this.feedbackSystem.stopBackgroundMusic();
+        this.feedbackSystem.playVictorySound();
     }
 
     /**
@@ -205,6 +212,9 @@ export class Level4 extends Level {
      * Limpia recursos del nivel
      */
     public dispose(): void {
+        // E4-HU-14: Detener música al salir del nivel
+        this.feedbackSystem.stopBackgroundMusic();
+        
         if (this.goalTrigger) {
             this.goalTrigger.dispose();
         }

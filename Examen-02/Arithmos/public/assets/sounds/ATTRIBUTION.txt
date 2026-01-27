@@ -1,0 +1,27 @@
+SONIDOS UTILIZADOS EN ARITHMOS
+================================
+
+E4-HU-14: Implementar Audio
+
+Los siguientes sonidos son de dominio público (CC0) de Freesound.org:
+
+1. success.wav
+   - Descripción: Arpegio ascendente de campanillas (éxito positivo)
+   - Fuente sugerida: Freesound.org - buscar "success bell chime" con licencia CC0
+   - Uso: Feedback de respuesta correcta
+
+2. error.wav
+   - Descripción: Sonido grave y seco (madera chocando)
+   - Fuente sugerida: Freesound.org - buscar "wooden knock" con licencia CC0
+   - Uso: Feedback de respuesta incorrecta
+
+INSTRUCCIONES DE DESCARGA:
+---------------------------
+1. Visitar https://freesound.org
+2. Buscar sonidos con filtro "License: Creative Commons 0"
+3. Descargar archivos en formato WAV o MP3
+4. Renombrar a success.wav y error.wav
+5. Colocar en este directorio (public/assets/sounds/)
+
+NOTA: Por limitaciones de derechos de autor, los archivos de audio 
+no se incluyen en el repositorio. Debes descargarlos manualmente.

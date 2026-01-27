@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Sonidos - Arithmos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de Sonidos - E4-HU-14</h1>
+    
+    <div class="info">
+        <p><strong>Instrucciones:</strong></p>
+        <ol>
+            <li>Haz clic en "Generar Success" para crear success.wav</li>
+            <li>Haz clic en "Generar Error" para crear error.wav</li>
+            <li>Los archivos se descargarán automáticamente</li>
+            <li>Mueve los archivos descargados a: <code>public/assets/sounds/</code></li>
+        </ol>
+    </div>
+
+    <button onclick="generateSuccess()">🔊 Generar Success</button>
+    <button onclick="generateError()">🔊 Generar Error</button>
+    <button onclick="testSuccess()">▶️ Probar Success</button>
+    <button onclick="testError()">▶️ Probar Error</button>
+
+    <script>
+        // Generar sonido de éxito (arpegio ascendente)
+        function generateSuccess() {
+            const audioContext = new AudioContext();
+            const sampleRate = audioContext.sampleRate;
+            const duration = 0.5; // 500ms
+            const length = sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, length, sampleRate);
+            const data = buffer.getChannelData(0);
+
+            // Arpegio ascendente: Do-Mi-Sol-Do (C-E-G-C)
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // Hz
+            const noteDuration = length / notes.length;
+
+            for (let i = 0; i < notes.length; i++) {
+                const startSample = Math.floor(i * noteDuration);
+                const endSample = Math.floor((i + 1) * noteDuration);
+                
+                for (let j = startSample; j < endSample && j < length; j++) {
+                    const t = (j - startSample) / noteDuration;
+                    const envelope = Math.exp(-t * 5); // Decay exponencial
+                    data[j] += Math.sin(2 * Math.PI * notes[i] * (j / sampleRate)) * envelope * 0.3;
+                }
+            }
+
+            downloadWav(buffer, 'success.wav');
+        }
+
+        // Generar sonido de error (golpe grave)
+        function generateError() {
+            const audioContext = new AudioContext();
+            const sampleRate = audioContext.sampleRate;
+            const duration = 0.3; // 300ms
+            const length = sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, length, sampleRate);
+            const data = buffer.getChannelData(0);
+
+            // Sonido grave con ruido (simula madera)
+            const baseFreq = 150; // Hz grave
+            
+            for (let i = 0; i < length; i++) {
+                const t = i / sampleRate;
+                const envelope = Math.exp(-t * 10); // Decay rápido
+                
+                // Mezcla de tono grave y ruido
+                const tone = Math.sin(2 * Math.PI * baseFreq * t);
+                const noise = (Math.random() * 2 - 1) * 0.3;
+                
+                data[i] = (tone * 0.7 + noise * 0.3) * envelope * 0.5;
+            }
+
+            downloadWav(buffer, 'error.wav');
+        }
+
+        // Convertir AudioBuffer a WAV y descargar
+        function downloadWav(buffer, filename) {
+            const wav = encodeWAV(buffer);
+            const blob = new Blob([wav], { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Codificar AudioBuffer a formato WAV
+        function encodeWAV(buffer) {
+            const numChannels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const format = 1; // PCM
+            const bitDepth = 16;
+            
+            const data = buffer.getChannelData(0);
+            const dataLength = data.length * numChannels * (bitDepth / 8);
+            const arrayBuffer = new ArrayBuffer(44 + dataLength);
+            const view = new DataView(arrayBuffer);
+
+            // WAV Header
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataLength, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); // fmt chunk size
+            view.setUint16(20, format, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numChannels * (bitDepth / 8), true);
+            view.setUint16(32, numChannels * (bitDepth / 8), true);
+            view.setUint16(34, bitDepth, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataLength, true);
+
+            // Write PCM samples
+            let offset = 44;
+            for (let i = 0; i < data.length; i++) {
+                const sample = Math.max(-1, Math.min(1, data[i]));
+                view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+                offset += 2;
+            }
+
+            return arrayBuffer;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        // Funciones de prueba
+        function testSuccess() {
+            const audioContext = new AudioContext();
+            const sampleRate = audioContext.sampleRate;
+            const duration = 0.5;
+            const length = sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, length, sampleRate);
+            const data = buffer.getChannelData(0);
+
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            const noteDuration = length / notes.length;
+
+            for (let i = 0; i < notes.length; i++) {
+                const startSample = Math.floor(i * noteDuration);
+                const endSample = Math.floor((i + 1) * noteDuration);
+                
+                for (let j = startSample; j < endSample && j < length; j++) {
+                    const t = (j - startSample) / noteDuration;
+                    const envelope = Math.exp(-t * 5);
+                    data[j] += Math.sin(2 * Math.PI * notes[i] * (j / sampleRate)) * envelope * 0.3;
+                }
+            }
+
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start();
+        }
+
+        function testError() {
+            const audioContext = new AudioContext();
+            const sampleRate = audioContext.sampleRate;
+            const duration = 0.3;
+            const length = sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, length, sampleRate);
+            const data = buffer.getChannelData(0);
+
+            const baseFreq = 150;
+            
+            for (let i = 0; i < length; i++) {
+                const t = i / sampleRate;
+                const envelope = Math.exp(-t * 10);
+                const tone = Math.sin(2 * Math.PI * baseFreq * t);
+                const noise = (Math.random() * 2 - 1) * 0.3;
+                data[i] = (tone * 0.7 + noise * 0.3) * envelope * 0.5;
+            }
+
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start();
+        }
+    </script>
+</body>
+</html>
