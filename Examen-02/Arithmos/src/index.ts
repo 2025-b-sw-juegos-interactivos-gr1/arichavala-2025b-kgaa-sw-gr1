@@ -6,6 +6,7 @@
 import { Engine, Scene, HemisphericLight, Vector3, Color3 } from "@babylonjs/core";
 import { GameManager } from "./core/GameManager";
 import { InteractionSystem } from "./core/InteractionSystem";
+import { FeedbackSystem } from "./core/FeedbackSystem";
 import { PlayerController } from "./player/PlayerController";
 import { Level4 } from "./levels/Level4";
 
@@ -16,6 +17,7 @@ class Game {
     private gameManager: GameManager;
     private playerController: PlayerController | null;
     private interactionSystem: InteractionSystem | null;
+    private feedbackSystem: FeedbackSystem | null;
 
     constructor() {
         // Obtener el canvas del HTML
@@ -36,6 +38,7 @@ class Game {
         this.scene = this.createScene();
         this.playerController = null;
         this.interactionSystem = null;
+        this.feedbackSystem = null;
         
         // Ocultar pantalla de carga
         this.hideLoadingScreen();
@@ -71,8 +74,11 @@ class Game {
         // Inicializar sistema de interacción (raycast)
         this.interactionSystem = new InteractionSystem(scene);
 
+        // Inicializar sistema de feedback (visual y auditivo)
+        this.feedbackSystem = new FeedbackSystem(scene);
+
         // Cargar Nivel 4 (Épica 3 - Historia de Usuario E3-HU-09 a E3-HU-12)
-        const level4 = new Level4(scene);
+        const level4 = new Level4(scene, this.feedbackSystem);
         level4.buildGeometry();
         level4.setupPuzzles();
 
@@ -84,6 +90,7 @@ class Game {
         console.log('✨ Arquitectura: Singleton + Observer + State Pattern');
         console.log('🎯 Controles: WASD para movimiento, Mouse para mirar');
         console.log('🖱️ Sistema de Raycast: Clic izquierdo para interactuar');
+        console.log('🎵 Sistema de Feedback: Visual (colores, shake) + Audio (beeps)');
         
         return scene;
     }

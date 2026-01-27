@@ -2,19 +2,24 @@
  * DoorMechanism
  * Controla la animación de las puertas/obstáculos.
  * Se suscribe al InteractableObject usando el Observer Pattern.
+ * 
+ * E2-HU-08: Integrado con FeedbackSystem para retroalimentación visual/auditiva
  */
 import { Mesh, Scene, Animation } from '@babylonjs/core';
 import { IObserver } from '../interactables/InteractableObject';
+import { FeedbackSystem } from '../core/FeedbackSystem';
 
 export class DoorMechanism implements IObserver {
     private doorMesh: Mesh | null;
     private scene: Scene;
     private isOpen: boolean;
+    private feedbackSystem: FeedbackSystem;
 
-    constructor(scene: Scene) {
+    constructor(scene: Scene, feedbackSystem: FeedbackSystem) {
         this.scene = scene;
         this.doorMesh = null;
         this.isOpen = false;
+        this.feedbackSystem = feedbackSystem;
     }
 
     /**
@@ -31,9 +36,11 @@ export class DoorMechanism implements IObserver {
     public onNotify(isCorrect: boolean): void {
         if (isCorrect) {
             console.log('¡Respuesta correcta! Abriendo puerta...');
+            this.feedbackSystem.showSuccess(this.doorMesh || undefined);
             this.openDoor();
         } else {
             console.log('Respuesta incorrecta. Inténtalo de nuevo.');
+            this.feedbackSystem.showError(this.doorMesh || undefined);
             this.showError();
         }
     }

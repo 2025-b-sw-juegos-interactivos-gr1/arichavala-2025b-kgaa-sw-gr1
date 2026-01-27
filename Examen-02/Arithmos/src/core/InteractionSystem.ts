@@ -42,16 +42,20 @@ export class InteractionSystem {
     private handlePointerDown(pointerInfo: PointerInfo): void {
         const pickResult = pointerInfo.pickInfo;
 
-        // Verificar si el raycast golpeó algo
+        // Solo responder a clic izquierdo (boton 0)
+        if (pointerInfo.event.button !== 0) return;
+
+        // Verificar si el raycast golpeo algo
         if (pickResult && pickResult.hit && pickResult.pickedMesh) {
             const meshName = pickResult.pickedMesh.name;
             
-            console.log(`🎯 Objeto detectado: ${meshName}`);
+            console.log(`Objeto detectado: ${meshName}`);
             
             // El mesh debe tener metadata con el callback de interacción
             const metadata = pickResult.pickedMesh.metadata;
             if (metadata && metadata.onInteract) {
-                metadata.onInteract();
+                // Pasar el mesh al callback para feedback visual
+                metadata.onInteract(pickResult.pickedMesh);
             }
         }
     }

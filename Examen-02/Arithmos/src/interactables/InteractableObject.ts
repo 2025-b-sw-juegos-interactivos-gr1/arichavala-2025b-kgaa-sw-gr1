@@ -2,8 +2,11 @@
  * InteractableObject
  * Clase base para cualquier objeto cliqueable en el mundo.
  * Utiliza el Observer Pattern para notificar cuando se interactúa con el objeto.
+ * 
+ * E2-HU-08: Integrado con FeedbackSystem para retroalimentación
  */
 import { Mesh } from '@babylonjs/core';
+import { FeedbackSystem } from '../core/FeedbackSystem';
 
 export interface IObserver {
     onNotify(isCorrect: boolean): void;
@@ -14,6 +17,7 @@ export abstract class InteractableObject {
     protected value: number | string;
     protected isCorrect: boolean;
     protected mesh: Mesh | null;
+    protected feedbackSystem: FeedbackSystem | null;
     private observers: IObserver[] = [];
 
     constructor(id: string, value: number | string, isCorrect: boolean) {
@@ -21,6 +25,7 @@ export abstract class InteractableObject {
         this.value = value;
         this.isCorrect = isCorrect;
         this.mesh = null;
+        this.feedbackSystem = null;
     }
 
     /**
@@ -44,6 +49,16 @@ export abstract class InteractableObject {
      */
     public onPointerDown(): void {
         console.log(`Objeto ${this.id} seleccionado. Valor: ${this.value}`);
+        
+        // Feedback visual en la esfera
+        if (this.feedbackSystem && this.mesh) {
+            if (this.isCorrect) {
+                this.feedbackSystem.showSuccess(this.mesh);
+            } else {
+                this.feedbackSystem.showError(this.mesh);
+            }
+        }
+        
         this.notifyObservers();
     }
 
@@ -59,5 +74,12 @@ export abstract class InteractableObject {
      */
     public getIsCorrect(): boolean {
         return this.isCorrect;
+    }
+
+    /**
+     * Establece el sistema de feedback
+     */
+    public setFeedbackSystem(feedbackSystem: FeedbackSystem): void {
+        this.feedbackSystem = feedbackSystem;
     }
 }

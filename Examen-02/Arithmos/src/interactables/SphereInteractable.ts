@@ -49,7 +49,7 @@ export class SphereInteractable extends InteractableObject {
         if (this.mesh) {
             // Configurar metadata con callback de interacción
             this.mesh.metadata = {
-                onInteract: () => this.onPointerDown()
+                onInteract: (mesh: any) => this.onPointerDown()
             };
             
             // Hacer que el mesh sea seleccionable por raycast

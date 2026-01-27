@@ -2,18 +2,23 @@
  * Level4 - Río Divisor
  * Implementación específica del Nivel 4 (Épica 3)
  * Tema: División y fracciones
+ * 
+ * E2-HU-08: Integrado con FeedbackSystem
  */
 import { Scene, MeshBuilder, Vector3, StandardMaterial, Color3 } from '@babylonjs/core';
 import { Level } from './Level';
 import { SphereInteractable } from '../interactables/SphereInteractable';
 import { DoorMechanism } from '../mechanics/DoorMechanism';
+import { FeedbackSystem } from '../core/FeedbackSystem';
 
 export class Level4 extends Level {
     private doorMechanism: DoorMechanism;
+    private feedbackSystem: FeedbackSystem;
 
-    constructor(scene: Scene) {
+    constructor(scene: Scene, feedbackSystem: FeedbackSystem) {
         super(scene, 4, 'Río Divisor');
-        this.doorMechanism = new DoorMechanism(scene);
+        this.feedbackSystem = feedbackSystem;
+        this.doorMechanism = new DoorMechanism(scene, feedbackSystem);
     }
 
     /**
@@ -82,6 +87,11 @@ export class Level4 extends Level {
             this.scene,
             new Vector3(3, 1.5, 8)
         );
+
+        // Configurar FeedbackSystem en las esferas
+        sphere1.setFeedbackSystem(this.feedbackSystem);
+        sphere2.setFeedbackSystem(this.feedbackSystem);
+        sphere3.setFeedbackSystem(this.feedbackSystem);
 
         // Suscribir la puerta a las esferas (Observer Pattern)
         sphere1.addObserver(this.doorMechanism);
