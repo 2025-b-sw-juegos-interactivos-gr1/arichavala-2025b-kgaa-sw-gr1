@@ -5,8 +5,9 @@
  * 
  * E2-HU-08: Integrado con FeedbackSystem
  * E3-HU-12: Zona de Meta con trigger
+ * E4-HU-13: Arte Low Poly - Rio de datos y puente de cristal
  */
-import { Scene, MeshBuilder, Vector3, StandardMaterial, Color3 } from '@babylonjs/core';
+import { Scene, MeshBuilder, Vector3, StandardMaterial, Color3, DynamicTexture, Texture } from '@babylonjs/core';
 import { Level } from './Level';
 import { SphereInteractable } from '../interactables/SphereInteractable';
 import { DoorMechanism } from '../mechanics/DoorMechanism';
@@ -28,58 +29,73 @@ export class Level4 extends Level {
     /**
      * Greyboxing del Nivel 4
      * E3-HU-09: Construccion completa del pasillo lineal
-     * Crea el pasillo, paredes laterales, suelo y la pared que bloquea el camino
+     * E4-HU-13: Puente de cristal sobre rio de datos
      */
     public buildGeometry(): void {
-        console.log('Construyendo geometria del Nivel 4...');
+        console.log('Construyendo geometria del Nivel 4: Rio Divisor');
 
         // E4-HU-14: Iniciar música de fondo
         this.feedbackSystem.startBackgroundMusic();
 
-        // Suelo del pasillo (40 unidades de largo x 10 de ancho)
-        const ground = MeshBuilder.CreateGround(
-            'ground',
+        // Rio de datos (debajo del puente)
+        const river = MeshBuilder.CreateGround(
+            'river',
+            { width: 12, height: 42 },
+            this.scene
+        );
+        river.position.y = -1; // Debajo del puente
+        const riverMat = new StandardMaterial('riverMat', this.scene);
+        riverMat.diffuseColor = new Color3(0.1, 0.3, 0.8); // Azul datos
+        riverMat.emissiveColor = new Color3(0, 0.1, 0.3); // Brillo azul
+        river.material = riverMat;
+
+        // Puente de cristal (suelo transparente)
+        const bridge = MeshBuilder.CreateGround(
+            'bridge',
             { width: 10, height: 40 },
             this.scene
         );
-        const groundMat = new StandardMaterial('groundMat', this.scene);
-        groundMat.diffuseColor = new Color3(0.3, 0.3, 0.3); // Gris (E4-HU-13)
-        ground.material = groundMat;
+        const bridgeMat = new StandardMaterial('bridgeMat', this.scene);
+        bridgeMat.diffuseColor = new Color3(0.6, 0.8, 1.0); // Azul cristal
+        bridgeMat.specularColor = new Color3(1, 1, 1); // Reflejo brillante
+        bridgeMat.alpha = 0.4; // Semi-transparente
+        bridge.material = bridgeMat;
 
-        // Pared lateral izquierda
-        const leftWall = MeshBuilder.CreateBox(
-            'leftWall',
-            { width: 0.5, height: 6, depth: 40 },
+        // Barandas del puente (paredes laterales más bajas)
+        const leftRailing = MeshBuilder.CreateBox(
+            'leftRailing',
+            { width: 0.3, height: 1.5, depth: 40 },
             this.scene
         );
-        leftWall.position = new Vector3(-5, 3, 0);
-        const leftWallMat = new StandardMaterial('leftWallMat', this.scene);
-        leftWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
-        leftWall.material = leftWallMat;
+        leftRailing.position = new Vector3(-5, 0.75, 0);
+        const leftRailingMat = new StandardMaterial('leftRailingMat', this.scene);
+        leftRailingMat.diffuseColor = new Color3(0.5, 0.7, 0.9);
+        leftRailingMat.alpha = 0.6;
+        leftRailing.material = leftRailingMat;
 
-        // Pared lateral derecha
-        const rightWall = MeshBuilder.CreateBox(
-            'rightWall',
-            { width: 0.5, height: 6, depth: 40 },
+        const rightRailing = MeshBuilder.CreateBox(
+            'rightRailing',
+            { width: 0.3, height: 1.5, depth: 40 },
             this.scene
         );
-        rightWall.position = new Vector3(5, 3, 0);
-        const rightWallMat = new StandardMaterial('rightWallMat', this.scene);
-        rightWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
-        rightWall.material = rightWallMat;
+        rightRailing.position = new Vector3(5, 0.75, 0);
+        const rightRailingMat = new StandardMaterial('rightRailingMat', this.scene);
+        rightRailingMat.diffuseColor = new Color3(0.5, 0.7, 0.9);
+        rightRailingMat.alpha = 0.6;
+        rightRailing.material = rightRailingMat;
 
-        // Pared trasera (detras del jugador)
+        // Pared trasera (inicio del puente)
         const backWall = MeshBuilder.CreateBox(
             'backWall',
-            { width: 10, height: 6, depth: 0.5 },
+            { width: 10, height: 4, depth: 0.5 },
             this.scene
         );
-        backWall.position = new Vector3(0, 3, -20);
+        backWall.position = new Vector3(0, 2, -20);
         const backWallMat = new StandardMaterial('backWallMat', this.scene);
-        backWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
+        backWallMat.diffuseColor = new Color3(0.4, 0.6, 0.8);
         backWall.material = backWallMat;
 
-        // Pared bloqueante (Glitch Wall) - Obstaculo principal
+        // Pared bloqueante con número 24 (Glitch Wall)
         const glitchWall = MeshBuilder.CreateBox(
             'glitchWall',
             { width: 10, height: 6, depth: 0.5 },
@@ -87,14 +103,17 @@ export class Level4 extends Level {
         );
         glitchWall.position = new Vector3(0, 3, 10);
         
-        // E4-HU-13: Pared Roja semitransparente
+        // Material rojo semitransparente
         const glitchWallMat = new StandardMaterial('glitchWallMat', this.scene);
         glitchWallMat.diffuseColor = Color3.Red();
-        glitchWallMat.alpha = 0.5; // Semitransparente
+        glitchWallMat.alpha = 0.5;
         glitchWallMat.emissiveColor = new Color3(0.2, 0, 0);
         glitchWall.material = glitchWallMat;
 
-        // Plataforma elevada frente a la pared (para resaltar las esferas)
+        // Número "24" en la pared
+        this.addNumberToWall(glitchWall, 24);
+
+        // Plataforma frente a la pared (para las esferas)
         const platform = MeshBuilder.CreateBox(
             'platform',
             { width: 8, height: 0.3, depth: 4 },
@@ -102,15 +121,58 @@ export class Level4 extends Level {
         );
         platform.position = new Vector3(0, 0.15, 7);
         const platformMat = new StandardMaterial('platformMat', this.scene);
-        platformMat.diffuseColor = new Color3(0.3, 0.3, 0.35);
+        platformMat.diffuseColor = new Color3(0.4, 0.6, 0.8); // Cristal azul
+        platformMat.alpha = 0.6;
         platform.material = platformMat;
 
         this.doorMechanism.createDoor(glitchWall);
-
-        // E3-HU-12: Crear zona de meta (trigger invisible al final del pasillo)
         this.createGoalZone();
 
-        console.log('Greyboxing completado: Pasillo de 40x10 unidades con paredes laterales');
+        console.log('Nivel completado: Puente de cristal sobre río de datos con barrera 24');
+    }
+
+    /**
+     * E4-HU-13: Añade el número 24 a la pared roja
+     */
+    private addNumberToWall(wall: any, number: number): void {
+        const plane = MeshBuilder.CreatePlane(
+            'wallNumber',
+            { width: 4, height: 4 },
+            this.scene
+        );
+        
+        // Posicionar frente a la pared
+        plane.position = new Vector3(
+            wall.position.x,
+            wall.position.y,
+            wall.position.z - 0.3
+        );
+        
+        // Crear textura con el número
+        const texture = new DynamicTexture('wallNumberTexture', 512, this.scene);
+        const ctx = texture.getContext() as CanvasRenderingContext2D;
+        
+        ctx.clearRect(0, 0, 512, 512);
+        ctx.font = 'bold 300px Arial';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 8;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(number.toString(), 256, 256);
+        ctx.fillText(number.toString(), 256, 256);
+        
+        texture.update();
+        
+        const planeMat = new StandardMaterial('wallNumberMat', this.scene);
+        planeMat.diffuseTexture = texture;
+        planeMat.diffuseTexture.hasAlpha = true;
+        planeMat.useAlphaFromDiffuseTexture = true;
+        planeMat.emissiveColor = new Color3(0.8, 0.8, 0.8);
+        planeMat.backFaceCulling = false;
+        plane.material = planeMat;
+        
+        plane.isPickable = false;
     }
 
     /**
@@ -150,6 +212,107 @@ export class Level4 extends Level {
         // E4-HU-14: Detener música de fondo y reproducir victoria
         this.feedbackSystem.stopBackgroundMusic();
         this.feedbackSystem.playVictorySound();
+        
+        // E4-HU-14: Mostrar mensaje de victoria en pantalla
+        this.showVictoryMessage();
+    }
+
+    /**
+     * E4-HU-14: Muestra mensaje de victoria en pantalla
+     */
+    private showVictoryMessage(): void {
+        // Crear plano grande frente a la cámara
+        const messagePlane = MeshBuilder.CreatePlane(
+            'victoryMessage',
+            { width: 10, height: 4 },
+            this.scene
+        );
+        
+        // Posicionar frente al jugador
+        messagePlane.position = new Vector3(0, 2, 18);
+        
+        // Crear textura con el mensaje
+        const texture = new DynamicTexture('victoryTexture', { width: 1024, height: 512 }, this.scene);
+        const ctx = texture.getContext() as CanvasRenderingContext2D;
+        
+        // Fondo degradado púrpura (igual que pantalla de carga)
+        const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+        gradient.addColorStop(0, '#6B5B95');
+        gradient.addColorStop(1, '#8B7BA8');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1024, 512);
+        
+        // Estrellas amarillas decorativas (igual que pantalla de carga)
+        this.drawStar(ctx, 140, 90, 5, 35, 15, '#FFC857');
+        this.drawStar(ctx, 884, 90, 5, 35, 15, '#FFC857');
+        this.drawStar(ctx, 90, 420, 4, 25, 12, '#FFD700');
+        this.drawStar(ctx, 934, 420, 4, 25, 12, '#FFD700');
+        
+        // Texto principal
+        ctx.font = 'bold 120px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Sombra suave
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 3;
+        
+        // Texto blanco limpio
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText('¡FELICIDADES!', 512, 180);
+        
+        // Subtexto
+        ctx.font = 'bold 55px Arial';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText('Nivel Completado', 512, 310);
+        
+        // Quitar sombra
+        ctx.shadowColor = 'transparent';
+        
+        texture.update();
+        
+        // Material del plano
+        const planeMat = new StandardMaterial('victoryMat', this.scene);
+        planeMat.diffuseTexture = texture;
+        planeMat.emissiveColor = new Color3(1, 1, 1);
+        planeMat.backFaceCulling = false;
+        messagePlane.material = planeMat;
+        
+        messagePlane.isPickable = false;
+        
+        console.log('💫 Mensaje de victoria mostrado en pantalla');
+    }
+
+    /**
+     * Dibuja una estrella en el canvas
+     */
+    private drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number, color: string): void {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        const step = Math.PI / spikes;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+        }
+        
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
     }
 
     /**
