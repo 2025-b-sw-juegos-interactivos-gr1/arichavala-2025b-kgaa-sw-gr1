@@ -40,7 +40,7 @@ export class Level4 extends Level {
             this.scene
         );
         const groundMat = new StandardMaterial('groundMat', this.scene);
-        groundMat.diffuseColor = new Color3(0.4, 0.4, 0.4);
+        groundMat.diffuseColor = new Color3(0.3, 0.3, 0.3); // Gris (E4-HU-13)
         ground.material = groundMat;
 
         // Pared lateral izquierda
@@ -84,10 +84,11 @@ export class Level4 extends Level {
         );
         glitchWall.position = new Vector3(0, 3, 10);
         
+        // E4-HU-13: Pared Roja semitransparente
         const glitchWallMat = new StandardMaterial('glitchWallMat', this.scene);
         glitchWallMat.diffuseColor = Color3.Red();
-        glitchWallMat.alpha = 0.6;
-        glitchWallMat.emissiveColor = new Color3(0.3, 0, 0);
+        glitchWallMat.alpha = 0.5; // Semitransparente
+        glitchWallMat.emissiveColor = new Color3(0.2, 0, 0);
         glitchWall.material = glitchWallMat;
 
         // Plataforma elevada frente a la pared (para resaltar las esferas)

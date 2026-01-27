@@ -33,9 +33,10 @@ export class SphereInteractable extends InteractableObject {
         
         this.mesh.position = position;
 
-        // Material basico amarillo
+        // E4-HU-13: Material amarillo low poly
         const material = new StandardMaterial(`${this.id}_mat`, scene);
-        material.diffuseColor = Color3.Yellow();
+        material.diffuseColor = new Color3(1, 0.9, 0); // Amarillo brillante
+        material.specularColor = new Color3(0.2, 0.2, 0); // Reflejo sutil
         this.mesh.material = material;
 
         // Crear plano con el numero frente a la esfera
