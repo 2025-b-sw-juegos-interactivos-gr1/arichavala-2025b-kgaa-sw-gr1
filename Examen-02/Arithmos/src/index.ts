@@ -39,6 +39,11 @@ class Game {
         
         // Iniciar el loop de renderizado
         this.engine.runRenderLoop(() => {
+            // Actualizar el controlador del jugador (movimiento WASD)
+            if (this.playerController) {
+                this.playerController.update();
+            }
+            
             this.scene.render();
         });
         
@@ -71,6 +76,7 @@ class Game {
         console.log('🎮 Arithmos inicializado');
         console.log('📚 Nivel 4: Río Divisor cargado');
         console.log('✨ Arquitectura: Singleton + Observer + State Pattern');
+        console.log('🎯 Controles: WASD para movimiento, Mouse para mirar');
         
         return scene;
     }

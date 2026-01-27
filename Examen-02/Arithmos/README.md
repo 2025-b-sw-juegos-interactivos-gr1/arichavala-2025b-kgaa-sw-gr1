@@ -29,7 +29,7 @@ npm run build
 
 ###  ÉPICA 2: Ingeniería Core
 - [x] E2-HU-05: Configuración del Proyecto
-- [ ] E2-HU-06: Sistema de Movimiento (WASD)
+- [x] E2-HU-06: Sistema de Movimiento (WASD)
 - [ ] E2-HU-07: Sistema de Interacción (Raycast)
 - [ ] E2-HU-08: Sistema de Feedback
 
