@@ -23,35 +23,83 @@ export class Level4 extends Level {
 
     /**
      * Greyboxing del Nivel 4
-     * Crea el pasillo, suelo y la pared que bloquea el camino
+     * E3-HU-09: Construccion completa del pasillo lineal
+     * Crea el pasillo, paredes laterales, suelo y la pared que bloquea el camino
      */
     public buildGeometry(): void {
-        console.log('Construyendo geometría del Nivel 4...');
+        console.log('Construyendo geometria del Nivel 4...');
 
-        // Suelo
+        // Suelo del pasillo (40 unidades de largo x 10 de ancho)
         const ground = MeshBuilder.CreateGround(
             'ground',
-            { width: 20, height: 40 },
+            { width: 10, height: 40 },
             this.scene
         );
         const groundMat = new StandardMaterial('groundMat', this.scene);
-        groundMat.diffuseColor = Color3.Gray();
+        groundMat.diffuseColor = new Color3(0.4, 0.4, 0.4);
         ground.material = groundMat;
 
-        // Pared bloqueante (Glitch Wall)
-        const wall = MeshBuilder.CreateBox(
-            'glitchWall',
-            { width: 10, height: 5, depth: 0.5 },
+        // Pared lateral izquierda
+        const leftWall = MeshBuilder.CreateBox(
+            'leftWall',
+            { width: 0.5, height: 6, depth: 40 },
             this.scene
         );
-        wall.position = new Vector3(0, 2.5, 10);
-        
-        const wallMat = new StandardMaterial('wallMat', this.scene);
-        wallMat.diffuseColor = Color3.Red();
-        wallMat.alpha = 0.7;
-        wall.material = wallMat;
+        leftWall.position = new Vector3(-5, 3, 0);
+        const leftWallMat = new StandardMaterial('leftWallMat', this.scene);
+        leftWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
+        leftWall.material = leftWallMat;
 
-        this.doorMechanism.createDoor(wall);
+        // Pared lateral derecha
+        const rightWall = MeshBuilder.CreateBox(
+            'rightWall',
+            { width: 0.5, height: 6, depth: 40 },
+            this.scene
+        );
+        rightWall.position = new Vector3(5, 3, 0);
+        const rightWallMat = new StandardMaterial('rightWallMat', this.scene);
+        rightWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
+        rightWall.material = rightWallMat;
+
+        // Pared trasera (detras del jugador)
+        const backWall = MeshBuilder.CreateBox(
+            'backWall',
+            { width: 10, height: 6, depth: 0.5 },
+            this.scene
+        );
+        backWall.position = new Vector3(0, 3, -20);
+        const backWallMat = new StandardMaterial('backWallMat', this.scene);
+        backWallMat.diffuseColor = new Color3(0.5, 0.5, 0.5);
+        backWall.material = backWallMat;
+
+        // Pared bloqueante (Glitch Wall) - Obstaculo principal
+        const glitchWall = MeshBuilder.CreateBox(
+            'glitchWall',
+            { width: 10, height: 6, depth: 0.5 },
+            this.scene
+        );
+        glitchWall.position = new Vector3(0, 3, 10);
+        
+        const glitchWallMat = new StandardMaterial('glitchWallMat', this.scene);
+        glitchWallMat.diffuseColor = Color3.Red();
+        glitchWallMat.alpha = 0.6;
+        glitchWallMat.emissiveColor = new Color3(0.3, 0, 0);
+        glitchWall.material = glitchWallMat;
+
+        // Plataforma elevada frente a la pared (para resaltar las esferas)
+        const platform = MeshBuilder.CreateBox(
+            'platform',
+            { width: 8, height: 0.3, depth: 4 },
+            this.scene
+        );
+        platform.position = new Vector3(0, 0.15, 7);
+        const platformMat = new StandardMaterial('platformMat', this.scene);
+        platformMat.diffuseColor = new Color3(0.3, 0.3, 0.35);
+        platform.material = platformMat;
+
+        this.doorMechanism.createDoor(glitchWall);
+
+        console.log('Greyboxing completado: Pasillo de 40x10 unidades con paredes laterales');
     }
 
     /**
