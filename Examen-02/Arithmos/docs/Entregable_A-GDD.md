@@ -5,6 +5,7 @@
 **JUEGOS INTERACTIVOS**
 
 **Karina Arichavala**
+**Tatiana Gualpa**
 
 **DOCUMENTO DE DISEÑO DE VIDEOJUEGO (GDD)**
 
